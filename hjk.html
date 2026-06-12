@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jabbaar Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy: #05103a;
+  --navy-dark: #020920;
+  --blue: #1a3aff;
+  --blue-bright: #2d4fff;
+  --white: #ffffff;
+  --gray: rgba(255,255,255,0.65);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--navy-dark);
+  color: var(--white);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── CURSOR ─────────────────────── */
+.cursor {
+  position: fixed; width: 10px; height: 10px;
+  background: var(--blue-bright); border-radius: 50%;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform .08s;
+  mix-blend-mode: screen;
+}
+.cursor-ring {
+  position: fixed; width: 34px; height: 34px;
+  border: 1.5px solid rgba(45,79,255,0.7); border-radius: 50%;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: all .22s cubic-bezier(.16,1,.3,1);
+}
+
+/* ── PARTICLES ───────────────────── */
+#particles {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+}
+
+/* ── NAV ─────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 60px;
+  background: rgba(2,9,32,0.85);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  animation: navSlideDown .7s ease forwards;
+}
+@keyframes navSlideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+.logo{
+  display:flex;
+  align-items:center;
+  text-decoration:none;
+}
+
+.logo img{
+  height: 70px;
+  width:auto;
+  display:block;
+  object-fit:contain;
+}
+
+.nav-links{
+  display:flex;
+  gap:42px;
+  list-style:none;
+}
+.nav-links a {
+  color: rgba(255,255,255,0.72); font-size: 14px; font-weight: 500;
+  text-decoration: none; letter-spacing: .3px;
+  transition: color .25s;
+  position: relative;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: -3px; left: 0;
+  width: 0; height: 1.5px; background: var(--blue-bright);
+  transition: width .3s ease;
+}
+.nav-links a:hover { color: #fff; }
+.nav-links a:hover::after { width: 100%; }
+
+/* ── HERO ────────────────────────── */
+#hero {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding: 100px 60px 60px;
+  position: relative; overflow: hidden;
+  background: linear-gradient(135deg, #040d2e 0%, #060e28 40%, #07143a 70%, #040d2e 100%);
+}
+
+/* Subtle gradient blobs — same deep navy feel */
+.hero-blob {
+  position: absolute; border-radius: 50%; filter: blur(100px);
+  pointer-events: none; z-index: 1;
+}
+.blob1 {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(26,58,255,0.18) 0%, transparent 70%);
+  top: -150px; right: -100px;
+  animation: blobFloat 9s ease-in-out infinite;
+}
+.blob2 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(45,79,255,0.12) 0%, transparent 70%);
+  bottom: -100px; left: -80px;
+  animation: blobFloat 11s ease-in-out infinite reverse;
+}
+@keyframes blobFloat {
+  0%,100% { transform: translate(0,0) scale(1); }
+  40%      { transform: translate(25px,-20px) scale(1.04); }
+  70%      { transform: translate(-15px,18px) scale(0.97); }
+}
+
+/* Grid overlay — exact PDF vibe */
+#hero::before {
+  content: '';
+  position: absolute; inset: 0; z-index: 1;
+  background-image:
+    linear-gradient(rgba(26,58,255,0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,58,255,0.055) 1px, transparent 1px);
+  background-size: 55px 55px;
+  animation: gridFade 2s ease forwards; opacity: 0;
+}
+@keyframes gridFade { to { opacity: 1; } }
+
+/* Hero layout — LEFT text, RIGHT photo (exact PDF) */
+.hero-inner {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; gap: 40px;
+}
+
+.hero-left { flex: 1; max-width: 580px; }
+
+.hero-title {
+  font-size: clamp(56px, 7.5vw, 106px);
+  font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -1px;
+  opacity: 0;
+  animation: heroTitleIn .9s .3s cubic-bezier(.16,1,.3,1) forwards;
+}
+.hero-title .name-jabbaar { color: #fff; }
+.hero-title .name-pro {
+  color: var(--blue-bright);
+  font-style: italic;
+  font-weight: 800;
+  /* Subtle gradient on "Pro" */
+  background: linear-gradient(120deg, var(--blue-bright), #7090ff);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+@keyframes heroTitleIn {
+  from { opacity: 0; transform: translateY(45px) skewY(1.5deg); }
+  to   { opacity: 1; transform: translateY(0) skewY(0); }
+}
+
+.hero-subtitle {
+  color: var(--blue-bright);
+  font-size: 16px; font-weight: 500; letter-spacing: 1.5px;
+  margin-top: 10px; margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp .8s .55s ease forwards;
+}
+
+.hero-divider {
+  width: 0; height: 1.5px;
+  background: linear-gradient(90deg, var(--blue-bright), rgba(45,79,255,0));
+  margin-bottom: 28px;
+  animation: lineGrow 1s .7s ease forwards;
+}
+@keyframes lineGrow { to { width: 340px; } }
+
+.hero-desc {
+  color: var(--gray);
+  font-size: 15.5px; line-height: 1.75;
+  max-width: 500px;
+  opacity: 0;
+  animation: fadeUp .8s .75s ease forwards;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* RIGHT — photo circle (exact PDF style) */
+.hero-right {
+  flex-shrink: 0;
+  position: relative;
+  opacity: 0;
+  animation: fadeLeft .9s .5s cubic-bezier(.16,1,.3,1) forwards;
+}
+@keyframes fadeLeft {
+  from { opacity: 0; transform: translateX(60px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.photo-wrap {
+  width: 340px; height: 340px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(26,58,255,0.45);
+  position: relative;
+  box-shadow:
+    0 0 0 8px rgba(26,58,255,0.08),
+    0 0 0 16px rgba(26,58,255,0.04),
+    0 20px 80px rgba(26,58,255,0.3);
+  animation: photoBreath 4s ease-in-out infinite;
+}
+@keyframes photoBreath {
+  0%,100% { box-shadow: 0 0 0 8px rgba(26,58,255,0.08), 0 0 0 16px rgba(26,58,255,0.04), 0 20px 80px rgba(26,58,255,0.3); }
+  50%      { box-shadow: 0 0 0 10px rgba(26,58,255,0.13), 0 0 0 20px rgba(26,58,255,0.06), 0 20px 100px rgba(45,79,255,0.45); }
+}
+.photo-wrap img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.photo-placeholder {
+  width: 100%; height: 100%;
+  background: linear-gradient(160deg, #0c1d5e, #060e28);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; color: rgba(255,255,255,0.3); font-size: 12px; text-align: center; padding: 20px;
+}
+
+/* Spinning ring around photo */
+.photo-ring {
+  position: absolute; inset: -14px;
+  border-radius: 50%;
+  border: 1px dashed rgba(45,79,255,0.35);
+  animation: spinRing 18s linear infinite;
+  pointer-events: none;
+}
+.photo-ring::before {
+  content: '';
+  position: absolute; top: 12px; right: 16px;
+  width: 8px; height: 8px; background: var(--blue-bright);
+  border-radius: 50%; box-shadow: 0 0 14px var(--blue-bright);
+}
+@keyframes spinRing { to { transform: rotate(360deg); } }
+
+/* ── SERVICES ────────────────────── */
+#services {
+  padding: 110px 60px;
+  position: relative; overflow: hidden;
+  background: linear-gradient(180deg, #040d2e 0%, #060f32 50%, #040d2e 100%);
+}
+
+/* Services inner: LEFT photo, RIGHT text (exact PDF) */
+.services-inner {
+  display: flex; align-items: center; gap: 70px;
+  max-width: 1180px; margin: 0 auto;
+}
+
+/* Left — photo with camera */
+.services-left {
+  flex-shrink: 0;
+}
+.services-photo-wrap {
+  width: 320px; height: 400px;
+  border-radius: 28px; overflow: hidden;
+  border: 1px solid rgba(26,58,255,0.3);
+  position: relative;
+  box-shadow: 0 0 60px rgba(26,58,255,0.2);
+  background: linear-gradient(160deg, var(--blue) 0%, #0a1650 100%);
+}
+.services-photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.services-photo-placeholder {
+  width: 100%; height: 100%;
+  background: linear-gradient(160deg, var(--blue) 0%, #0a1650 100%);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.4); font-size: 13px; text-align: center;
+}
+
+/* Right — services text */
+.services-right { flex: 1; }
+
+.services-title {
+  font-size: clamp(40px, 5vw, 72px);
+  font-weight: 800;
+  line-height: 1.0; letter-spacing: -1px; margin-bottom: 44px;
+}
+.services-title .our { color: var(--blue-bright); }
+.services-title .services-word { color: #fff; }
+
+.service-item { margin-bottom: 36px; }
+.service-item-title {
+  font-size: 20px; font-weight: 700; color: var(--blue-bright);
+  margin-bottom: 8px; letter-spacing: .2px;
+}
+.service-item-desc {
+  font-size: 14px; font-weight: 600; color: var(--white);
+  line-height: 1.65;
+}
+
+/* ── ABOUT ───────────────────────── */
+#about {
+  padding: 110px 60px;
+  background: linear-gradient(180deg, #040d2e 0%, #050f35 100%);
+  position: relative; overflow: hidden;
+}
+.about-title {
+  font-size: clamp(48px, 6vw, 88px);
+  font-weight: 800; text-align: center;
+  margin-bottom: 16px; letter-spacing: -1px;
+}
+.about-category-label {
+  text-align: center; font-size: 15px; font-weight: 700;
+  color: var(--blue-bright); letter-spacing: .5px; margin-bottom: 28px;
+}
+
+/* Portfolio grid — exact PDF white boxes */
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px;
+  margin-bottom: 40px;
+  max-width: 1100px; margin-left: auto; margin-right: auto;
+}
+.about-card {
+  aspect-ratio: 1;
+  background: #fff;
+  border-radius: 22px;
+  overflow: hidden; position: relative; cursor: none;
+  transition: transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.25);
+}
+.about-card img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.about-card-placeholder {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, #f0f4ff, #dde6ff);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(26,58,255,0.25); font-size: 11px; text-align: center; padding: 8px;
+}
+.about-card:hover {
+  transform: scale(1.06) translateY(-4px);
+  box-shadow: 0 14px 50px rgba(26,58,255,0.4);
+  z-index: 2;
+}
+.about-card-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(160deg, rgba(26,58,255,0.7), rgba(45,79,255,0.5));
+  display: flex; align-items: flex-end; padding: 12px;
+  opacity: 0; transition: opacity .3s;
+  font-size: 11px; font-weight: 700; color: #fff; letter-spacing: .5px;
+}
+.about-card:hover .about-card-overlay { opacity: 1; }
+
+/* See More button area */
+.about-see-more-area {
+  text-align: center; margin-top: 8px;
+}
+.see-more-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 13px 30px; border-radius: 50px;
+  background: rgba(26,58,255,0.12); border: 1.5px solid rgba(26,58,255,0.4);
+  color: var(--blue-bright); font-size: 13px; font-weight: 700;
+  letter-spacing: 1.5px; text-transform: uppercase; cursor: none;
+  transition: all .3s;
+}
+.see-more-btn:hover {
+  background: rgba(26,58,255,0.22); border-color: var(--blue-bright);
+  color: #fff; transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(26,58,255,0.3);
+}
+.see-more-btn .btn-arrow { transition: transform .3s; font-size: 16px; }
+.see-more-btn:hover .btn-arrow { transform: translateX(5px); }
+
+/* Extra rows revealed on click */
+.about-grid-extra {
+  display: none; margin-top: 14px;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 14px; max-width: 1100px; margin-left: auto; margin-right: auto;
+}
+.about-grid-extra.open {
+  display: grid;
+  animation: fadeUp .5s ease forwards;
+}
+
+/* ── CONTACT ─────────────────────── */
+#contact {
+  padding: 110px 60px;
+  text-align: center; position: relative; overflow: hidden;
+  background: linear-gradient(180deg, #040d2e 0%, #020920 100%);
+}
+#contact::before {
+  content: '';
+  position: absolute; bottom: -200px; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 500px;
+  background: radial-gradient(ellipse, rgba(26,58,255,0.18), transparent 70%);
+  pointer-events: none;
+}
+.contact-inner { position: relative; z-index: 2; max-width: 600px; margin: 0 auto; }
+.contact-title {
+  font-size: clamp(42px, 6vw, 80px);
+  font-weight: 800; margin-bottom: 16px; letter-spacing: -1px;
+}
+.contact-sub {
+  color: var(--gray); font-size: 16px; line-height: 1.7; margin-bottom: 48px;
+}
+.contact-links {
+  display: flex; flex-direction: column; gap: 14px; align-items: center; margin-bottom: 48px;
+}
+.contact-link {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 28px; border-radius: 14px; width: 100%;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.09);
+  color: #fff; text-decoration: none; font-size: 14px; font-weight: 500; cursor: none;
+  transition: all .3s;
+}
+.contact-link:hover {
+  background: rgba(26,58,255,0.12); border-color: rgba(26,58,255,0.4);
+  transform: translateX(6px);
+}
+.contact-link-icon { font-size: 20px; }
+.contact-link-label { color: var(--blue-bright); font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.contact-link-val { font-size: 14px; margin-top: 1px; }
+.contact-cta {
+  display: inline-block;
+  padding: 16px 48px; border-radius: 50px;
+  background: linear-gradient(135deg, var(--blue), var(--blue-bright));
+  color: #fff; font-size: 15px; font-weight: 700; text-decoration: none; cursor: none;
+  box-shadow: 0 0 50px rgba(26,58,255,0.5);
+  transition: transform .3s, box-shadow .3s;
+  animation: ctaGlow 3s ease-in-out infinite;
+}
+@keyframes ctaGlow {
+  0%,100% { box-shadow: 0 0 50px rgba(26,58,255,0.5); }
+  50%      { box-shadow: 0 0 80px rgba(45,79,255,0.7), 0 0 140px rgba(26,58,255,0.3); }
+}
+.contact-cta:hover { transform: scale(1.04); }
+
+/* ── FOOTER ─────────────────────── */
+footer {
+  padding: 24px 60px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.35); font-size: 12px;
+  background: var(--navy-dark);
+}
+.footer-links { display: flex; gap: 20px; }
+.footer-links a { color: rgba(255,255,255,0.35); text-decoration: none; transition: color .25s; }
+.footer-links a:hover { color: var(--blue-bright); }
+
+/* ── SCROLL REVEAL ───────────────── */
+.reveal {
+  opacity: 0; transform: translateY(40px);
+  transition: opacity .85s ease, transform .85s cubic-bezier(.16,1,.3,1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: .1s; }
+.reveal-d2 { transition-delay: .2s; }
+.reveal-d3 { transition-delay: .3s; }
+.reveal-d4 { transition-delay: .4s; }
+.reveal-d5 { transition-delay: .5s; }
+.reveal-d6 { transition-delay: .6s; }
+
+.slot-ph {
+  width:100%; height:100%;
+  background: linear-gradient(135deg, #0c1d5e, #060e28);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-size:22px; color:rgba(255,255,255,0.25);
+}
+.url-row { display:flex; align-items:center; gap:10px; }
+.url-row label { font-size:12px; color:rgba(255,255,255,0.5); min-width:68px; font-weight:600; }
+.url-row input {
+  flex:1; padding:9px 14px; border-radius:10px;
+  background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12);
+  color:#fff; font-size:13px; outline:none; font-family:inherit; transition:border-color .25s;
+}
+.url-row input:focus { border-color:rgba(45,79,255,0.6); }
+.url-row input::placeholder { color:rgba(255,255,255,0.25); }
+
+/* ── RESPONSIVE ─────────────────── */
+@media (max-width: 900px) {
+  nav { padding: 18px 24px; }
+  .nav-links { display: none; }
+  #hero { padding: 90px 24px 60px; }
+  .hero-inner { flex-direction: column-reverse; align-items: flex-start; }
+  .photo-wrap { width: 220px; height: 220px; }
+  #services { padding: 80px 24px; }
+  .services-inner { flex-direction: column; gap: 40px; }
+  .services-photo-wrap { width: 100%; height: 260px; }
+  #about { padding: 80px 24px; }
+  .about-grid, .about-grid-extra { grid-template-columns: repeat(3, 1fr); }
+  #contact { padding: 80px 24px; }
+  footer { padding: 20px 24px; flex-direction: column; gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- Particles -->
+<canvas id="particles"></canvas>
+
+<!-- ═══════════════════ NAV ═══════════════════ -->
+<nav>
+  <a href="#hero" class="logo">
+    <img src="logo.png" alt="Jabbaar Pro Logo">
+</a>
+  <ul class="nav-links">
+    <li><a href="#hero">Home</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════ HERO ══════════════════ -->
+<section id="hero">
+  <div class="hero-blob blob1"></div>
+  <div class="hero-blob blob2"></div>
+
+  <div class="hero-inner">
+    <!-- LEFT text -->
+    <div class="hero-left">
+      <h1 class="hero-title">
+        <span class="name-jabbaar">Jabbaar</span>&nbsp;<span class="name-pro">Pro</span>
+      </h1>
+      <p class="hero-subtitle">Desinger, Editor, Developer</p>
+      <div class="hero-divider"></div>
+      <p class="hero-desc">
+        Waxaan ahay Jabbaar Pro, waxaan bixiyaa adeegyo tayo sare leh oo ay ka mid yihiin Graphic Design, Video Editing, Motion Graphics, iyo Web Development.<br><br>
+        Haddii aad rabto naqshado casri ah, muuqaallo soo jiidasho leh, ama website xirfad leh, ila soo xiriir maanta.
+      </p>
+    </div>
+
+    <!-- RIGHT photo -->
+    <div class="hero-right">
+      <div class="photo-ring"></div>
+      <div class="photo-wrap">
+        <img src="jabbaar.jpg" alt="jabbaar">
+        <div class="photo-placeholder">
+          <svg width="50" height="50" viewBox="0 0 50 50" fill="none"><circle cx="25" cy="19" r="10" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/><path d="M8 46c0-9.389 7.611-17 17-17s17 7.611 17 17" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SERVICES ══════════════ -->
+<section id="services">
+  <div class="services-inner">
+    <!-- LEFT — photo -->
+    <div class="services-left reveal">
+      <div class="services-photo-wrap">
+        <img src="tusaale.jpg" alt="jabbaar">
+        <div class="services-photo-placeholder">
+          <svg width="60" height="60" viewBox="0 0 60 60" fill="none"><rect x="5" y="15" width="50" height="34" rx="5" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/><circle cx="30" cy="32" r="10" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/><path d="M20 15l3-6h14l3 6" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT — text -->
+    <div class="services-right">
+      <h2 class="services-title reveal">
+        <span class="our">Our</span> <span class="services-word">Services</span>
+      </h2>
+
+      <div class="service-item reveal reveal-d1">
+        <div class="service-item-title">Graphic Design</div>
+        <div class="service-item-desc">
+          Waxaan sameeyaa logos, posters, flyers, banners, iyo naqshado casri ah oo soo jiidasho leh.
+          Naqshad kasta waxaan diiradda saaraa tayada, hal-abuurka, iyo muuqaalka ganacsigaaga.
+        </div>
+      </div>
+
+      <div class="service-item reveal reveal-d2">
+        <div class="service-item-title">Video Editing</div>
+        <div class="service-item-desc">
+          Waxaan tafatiraa muuqaalada si xirfad leh, anigoo ku daraya transitions, effects, subtitles,
+          iyo motion graphics. Ujeedadaydu waa in muuqaalkaagu noqdo mid soo jiita daawadayaasha.
+        </div>
+      </div>
+
+      <div class="service-item reveal reveal-d3">
+        <div class="service-item-title">Web Development</div>
+        <div class="service-item-desc">
+          Waxaan dhisaa websites casri ah, degdeg ah, kana shaqeeya mobile-ka iyo computer-ka.
+          Website kasta waxaan u naqshadeeyaa si uu u noqdo mid qurux badan, fudud in la isticmaalo,
+          isla markaana kor u qaada ganacsigaaga.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ ABOUT ════════════════ -->
+<section id="about">
+  <h2 class="about-title reveal">ABOUT US</h2>
+
+  <!-- Row 1 — Graphic Design -->
+  <!-- EDIT PANEL -->
+  <div id="editPanel" style="display:none; max-width:800px; margin:0 auto 40px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:28px;">
+    <div style="font-size:13px; font-weight:700; color:#2d4fff; letter-spacing:1px; text-transform:uppercase; margin-bottom:20px;">🖼 Sawirka URL-ka Ku Dar</div>
+    <div id="urlInputs" style="display:flex; flex-direction:column; gap:10px;"></div>
+    <button onclick="applyImages()" style="margin-top:18px; padding:11px 26px; border-radius:30px; background:linear-gradient(135deg,#1a3aff,#2d4fff); border:none; color:#fff; font-size:13px; font-weight:700; cursor:pointer; letter-spacing:.5px;">✓ Ku Dar Sawirrada</button>
+    <button onclick="toggleEdit()" style="margin-top:18px; margin-left:10px; padding:11px 22px; border-radius:30px; background:transparent; border:1px solid rgba(255,255,255,0.15); color:rgba(255,255,255,0.6); font-size:13px; font-weight:600; cursor:pointer;">Xir</button>
+  </div>
+
+  <p class="about-category-label reveal reveal-d1">Graphic Design</p>
+  <div class="about-grid" id="aboutGrid1">
+    <div class="about-card reveal reveal-d1" data-slot="0"><div class="about-card-placeholder slot-ph">🎨<br><span style="font-size:10px;margin-top:4px;display:block">Sawir 1</span></div><div class="about-card-overlay">Logo Design</div></div>
+    <div class="about-card reveal reveal-d2" data-slot="1"><div class="about-card-placeholder slot-ph">🖼<br><span style="font-size:10px;margin-top:4px;display:block">Sawir 2</span></div><div class="about-card-overlay">Poster</div></div>
+    <div class="about-card reveal reveal-d3" data-slot="2"><div class="about-card-placeholder slot-ph">✏️<br><span style="font-size:10px;margin-top:4px;display:block">Sawir 3</span></div><div class="about-card-overlay">Branding</div></div>
+    <div class="about-card reveal reveal-d4" data-slot="3"><div class="about-card-placeholder slot-ph">📄<br><span style="font-size:10px;margin-top:4px;display:block">Sawir 4</span></div><div class="about-card-overlay">Flyer</div></div>
+    <div class="about-card reveal reveal-d5" data-slot="4"><div class="about-card-placeholder slot-ph">📱<br><span style="font-size:10px;margin-top:4px;display:block">Sawir 5</span></div><div class="about-card-overlay">Social Media</div></div>
+    <div class="about-card reveal reveal-d6" data-slot="5"><div class="about-card-placeholder slot-ph">🏷<br><span style="font-size:10px;margin-top:4px;display:block">Sawir 6</span></div><div class="about-card-overlay">Banner</div></div>
+  </div>
+
+  <p class="about-category-label reveal reveal-d1" style="margin-top:32px;">Video Editing</p>
+  <div class="about-grid" id="aboutGrid2">
+    <div class="about-card reveal reveal-d1" data-slot="6"><div class="about-card-placeholder slot-ph">🎬<br><span style="font-size:10px;margin-top:4px;display:block">Sawir 7</span></div><div class="about-card-overlay">Video Edit</div></div>
+    <div class="about-card reveal reveal-d2" data-slot="7"><div class="about-card-placeholder slot-ph">✨<br><span style="font-size:10px;margin-top:4px;display:block">Sawir 8</span></div><div class="about-card-overlay">Motion</div></div>
+    <div class="about-card reveal reveal-d3" data-slot="8"><div class="about-card-placeholder slot-ph">💬<br><span style="font-size:10px;margin-top:4px;display:block">Sawir 9</span></div><div class="about-card-overlay">Subtitles</div></div>
+    <div class="about-card reveal reveal-d4" data-slot="9"><div class="about-card-placeholder slot-ph">🎨<br><span style="font-size:10px;margin-top:4px;display:block">Sawir 10</span></div><div class="about-card-overlay">Color Grade</div></div>
+    <div class="about-card reveal reveal-d5" data-slot="10"><div class="about-card-placeholder slot-ph">🔀<br><span style="font-size:10px;margin-top:4px;display:block">Sawir 11</span></div><div class="about-card-overlay">Transitions</div></div>
+    <div class="about-card reveal reveal-d6" data-slot="11"><div class="about-card-placeholder slot-ph">⚡<br><span style="font-size:10px;margin-top:4px;display:block">Sawir 12</span></div><div class="about-card-overlay">Effects</div></div>
+  </div>
+
+  <!-- EDIT BUTTON -->
+  <div class="about-see-more-area" style="margin-top:36px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">?
+    <button class="see-more-btn reveal" id="seeMoreBtn" onclick="toggleMore()">
+      See More Work <span class="btn-arrow">→</span>
+    </button>
+  </div>
+
+  <!-- Extra rows -->
+  <div class="about-grid-extra" id="extraGrid">
+    <div class="about-card" data-slot="12"><div class="about-card-placeholder slot-ph">🌐<br><span style="font-size:10px;margin-top:4px;display:block">Sawir 13</span></div><div class="about-card-overlay">Web Project</div></div>
+    <div class="about-card" data-slot="13"><div class="about-card-placeholder slot-ph">👤<br><span style="font-size:10px;margin-top:4px;display:block">Sawir 14</span></div><div class="about-card-overlay">Portfolio</div></div>
+    <div class="about-card" data-slot="14"><div class="about-card-placeholder slot-ph">🖼<br><span style="font-size:10px;margin-top:4px;display:block">Sawir 15</span></div><div class="about-card-overlay">Project 3</div></div>
+    <div class="about-card" data-slot="15"><div class="about-card-placeholder slot-ph">✅<br><span style="font-size:10px;margin-top:4px;display:block">Sawir 16</span></div><div class="about-card-overlay">Project 4</div></div>
+    <div class="about-card" data-slot="16"><div class="about-card-placeholder slot-ph">⭐<br><span style="font-size:10px;margin-top:4px;display:block">Sawir 17</span></div><div class="about-card-overlay">Project 5</div></div>
+    <div class="about-card" data-slot="17"><div class="about-card-placeholder slot-ph">➕<br><span style="font-size:10px;margin-top:4px;display:block">Sawir 18</span></div><div class="about-card-overlay">More</div></div>
+  </div>
+</section>
+
+<!-- ═══════════════════ CONTACT ══════════════ -->
+<section id="contact">
+  <div class="contact-inner">
+    <h2 class="contact-title reveal">Ila Soo Xiriir</h2>
+    <p class="contact-sub reveal">Haddii aad rabto website, design, ama video editing — ila soo xiriir maanta. Waxaan kugu jawaabayaa si degdeg ah.</p>
+    <div class="contact-links reveal">
+      <a href="ajabbaaralihassan@gmail.com" class="contact-link">
+        <span class="contact-link-icon">✉️</span>
+        <div><div class="contact-link-label">Email</div><div class="contact-link-val">ajabbaaralihassan@gmail.com</div></div>
+      </a>
+      <a href="https://instagram.com/jabbaarpro" target="_blank" class="contact-link">
+        <span class="contact-link-icon">📸</span>
+        <div><div class="contact-link-label">Instagram</div><div class="contact-link-val">@engjabbaar</div></div>
+      </a>
+      <a href="https://tiktok.com/@eng.abdijabbaar" target="_blank" class="contact-link">
+        <span class="contact-link-icon">🎵</span>
+        <div><div class="contact-link-label">TikTok</div><div class="contact-link-val">@jabbaar_pro</div></div>
+      </a>
+      <a href="https://wa.me/252610215152" target="_blank" class="contact-link">
+        <span class="contact-link-icon">💬</span>
+        <div><div class="contact-link-label">WhatsApp</div><div class="contact-link-val">+252 610 215 152</div></div>
+      </a>
+      <a href="https://facebook.com/engjabbaar" target="_blank" class="contact-link">
+        <span class="contact-link-icon">📘</span>
+        <div><div class="contact-link-label">Facebook</div><div class="contact-link-val">Jabbaar Pro</div></div>
+      </a>
+    </div>
+    <a href="https://wa.me/252610215152?text=Salaan%2C%20waxaan%20rabaa%20inaan%20bilaabo%20mashruuc%20cusub%20adiga%20lagula%20shaqeeyo." target="_blank" class="contact-cta reveal">Bilow Mashruucaaga →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>© 2025 Jabbaar Pro — Mogadishu, Somalia</div>
+  <div class="footer-links">
+    <a href="#">Facebook</a>
+    <a href="#">Instagram</a>
+    <a href="#">TikTok</a>
+    <a href="https://wa.me/252610215152" target="_blank">WhatsApp</a>
+  </div>
+</footer>
+
+<script>
+// ── CURSOR ────────────────────────────────
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cur.style.left=mx+'px'; cur.style.top=my+'px';
+});
+(function animRing(){
+  rx+=(mx-rx)*.13; ry+=(my-ry)*.13;
+  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+})();
+
+// ── PARTICLES ─────────────────────────────
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let W,H;
+function resize(){ W=canvas.width=innerWidth; H=canvas.height=innerHeight; }
+resize(); addEventListener('resize',resize);
+const PTS = Array.from({length:70},()=>({
+  x:Math.random()*9999, y:Math.random()*9999,
+  vx:(Math.random()-.5)*.2, vy:(Math.random()-.5)*.2,
+  r:Math.random()*1.2+.3, o:Math.random()*.5+.08
+}));
+(function draw(){
+  ctx.clearRect(0,0,W,H);
+  PTS.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+    if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(45,79,255,${p.o})`; ctx.fill();
+  });
+  for(let i=0;i<PTS.length;i++) for(let j=i+1;j<PTS.length;j++){
+    const dx=PTS[i].x-PTS[j].x, dy=PTS[i].y-PTS[j].y;
+    const d=Math.sqrt(dx*dx+dy*dy);
+    if(d<100){
+      ctx.beginPath(); ctx.moveTo(PTS[i].x,PTS[i].y); ctx.lineTo(PTS[j].x,PTS[j].y);
+      ctx.strokeStyle=`rgba(26,58,255,${.1*(1-d/100)})`; ctx.lineWidth=.5; ctx.stroke();
+    }
+  }
+  requestAnimationFrame(draw);
+})();
+
+// ── SCROLL REVEAL ─────────────────────────
+const obs = new IntersectionObserver(es=>{
+  es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+
+// ── SEE MORE ──────────────────────────────
+function toggleMore(){
+  const grid = document.getElementById('extraGrid');
+  const btn  = document.getElementById('seeMoreBtn');
+  const open = grid.classList.toggle('open');
+  btn.innerHTML = open
+    ? 'Show Less <span class="btn-arrow">↑</span>'
+    : 'See More Work <span class="btn-arrow">→</span>';
+  if(open) grid.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+</script>
+</body>
+</html>
